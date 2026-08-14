@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KeyJump options</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="header">
+        <h1>KeyJump</h1>
+        <p class="subtitle">Label every actionable thing on the page, then type to jump.</p>
+      </header>
+
+      <form id="settings-form" novalidate>
+        <section class="card">
+          <h2>Keys</h2>
+
+          <div class="field">
+            <label for="triggerKey">Trigger key</label>
+            <input id="triggerKey" name="triggerKey" type="text" maxlength="1" size="3" autocomplete="off" spellcheck="false" />
+            <p class="hint">One character. Ignored while the caret is in a text field, so it stays usable for typing.</p>
+          </div>
+
+          <div class="field">
+            <label for="hintChars">Hint characters</label>
+            <input id="hintChars" name="hintChars" type="text" autocomplete="off" spellcheck="false" />
+            <p class="hint">
+              Alphabet used to build labels — home-row letters work best. Duplicates are removed;
+              minimum 4 characters. <span id="capacity" class="capacity"></span>
+            </p>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Matching</h2>
+
+          <label class="check">
+            <input id="detectPointerCursor" name="detectPointerCursor" type="checkbox" />
+            <span>
+              Include elements that just look clickable
+              <em>Catches <code>div</code>s with click handlers by checking for a pointer cursor. Slightly slower on huge pages.</em>
+            </span>
+          </label>
+
+          <label class="check">
+            <input id="textFallback" name="textFallback" type="checkbox" />
+            <span>
+              Fall back to searching link text
+              <em>When what you typed matches no label, match against the visible text instead.</em>
+            </span>
+          </label>
+
+          <label class="check">
+            <input id="autoActivateSingle" name="autoActivateSingle" type="checkbox" />
+            <span>
+              Action immediately when a keystroke narrows to one match
+              <em>Skips the Enter press. Backspace never triggers it, so you can always correct a
+              typo. Turn this off if you'd rather confirm every action.</em>
+            </span>
+          </label>
+        </section>
+
+        <section class="card">
+          <h2>Appearance</h2>
+
+          <div class="field">
+            <label for="theme">Theme</label>
+            <select id="theme" name="theme">
+              <option value="auto">Auto (follow system)</option>
+              <option value="dark">Dark chips</option>
+              <option value="light">Light chips</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="hintPlacement">Hint position</label>
+            <select id="hintPlacement" name="hintPlacement">
+              <option value="topleft">Top-left corner of the element</option>
+              <option value="center">Centered on the element</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="fontSize">Hint size</label>
+            <div class="range-row">
+              <input id="fontSize" name="fontSize" type="range" min="8" max="28" step="1" />
+              <output id="fontSizeValue" for="fontSize"></output>
+            </div>
+          </div>
+
+          <label class="check">
+            <input id="showStatusBar" name="showStatusBar" type="checkbox" />
+            <span>
+              Show the status readout
+              <em>Corner display with what you've typed and how many targets still match.</em>
+            </span>
+          </label>
+        </section>
+
+        <section class="card">
+          <h2>Excluded sites</h2>
+          <div class="field">
+            <label for="excludedSites">One pattern per line</label>
+            <textarea id="excludedSites" name="excludedSites" rows="4" spellcheck="false" autocomplete="off"></textarea>
+            <p class="hint">
+              A pattern containing <code>*</code> is matched against the whole URL
+              (<code>https://mail.google.com/*</code>). A pattern without one is treated as a
+              substring (<code>figma.com</code>).
+            </p>
+          </div>
+        </section>
+
+        <div class="actions">
+          <button type="submit" class="primary">Save</button>
+          <button type="button" id="reset" class="secondary">Restore defaults</button>
+          <span id="status" class="status" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+
+      <section class="card cheatsheet">
+        <h2>While hints are showing</h2>
+        <dl>
+          <div><dt>a–z</dt><dd>Filter down to matching labels</dd></div>
+          <div><dt>Enter</dt><dd>Action the highlighted target</dd></div>
+          <div><dt>Shift + Enter</dt><dd>Open a link in a new tab</dd></div>
+          <div><dt>Tab / ↓ / →</dt><dd>Move to the next match</dd></div>
+          <div><dt>Shift + Tab / ↑ / ←</dt><dd>Move to the previous match</dd></div>
+          <div><dt>Backspace</dt><dd>Undo the last character</dd></div>
+          <div><dt>Esc</dt><dd>Dismiss</dd></div>
+        </dl>
+      </section>
+    </main>
+
+    <script src="../common/defaults.js"></script>
+    <script src="../common/settings.js"></script>
+    <script src="options.js"></script>
+  </body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>KeyJump</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <h1>KeyJump</h1>
+    <p class="lede">
+      Press <kbd id="trigger">;</kbd> on any page to label every link, button and field.
+      Type the label, then <kbd>Enter</kbd>.
+    </p>
+
+    <dl class="keys">
+      <div><dt>a–z</dt><dd>Narrow the matches</dd></div>
+      <div><dt>Enter</dt><dd>Action the highlighted target</dd></div>
+      <div><dt>⇧ Enter</dt><dd>Open a link in a new tab</dd></div>
+      <div><dt>Tab / ↓</dt><dd>Next match</dd></div>
+      <div><dt>⌫</dt><dd>Undo a character</dd></div>
+      <div><dt>Esc</dt><dd>Dismiss</dd></div>
+    </dl>
+
+    <p class="note">
+      Chrome blocks extensions on <code>chrome://</code> pages and the Web Store, so hints
+      won't open there.
+    </p>
+
+    <a class="options" id="options-link" href="../options/options.html" target="_blank" rel="noopener">Options</a>
+
+    <script src="../common/defaults.js"></script>
+    <script src="../common/settings.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>
