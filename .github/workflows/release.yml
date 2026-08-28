@@ -1,0 +1,71 @@
+name: Release
+
+# Tagging v1.2.3 builds the package, attaches it to a GitHub release, and
+# uploads it to the Chrome Web Store as a *draft*. Submitting that draft for
+# review stays a manual click in the developer dashboard — see
+# docs/PUBLISHING.md. Nothing in this workflow changes the live listing.
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # A tag that disagrees with manifest.json would publish a build whose
+      # version is not the one anybody tagged. Catch it before anything ships.
+      - name: Check the tag matches manifest.json
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          manifest="$(node -p "require('./manifest.json').version")"
+          if [ "$tag" != "$manifest" ]; then
+            echo "::error::tag $GITHUB_REF_NAME implies version $tag, but manifest.json says $manifest"
+            exit 1
+          fi
+          echo "tag and manifest agree on $manifest"
+
+      - name: Build the store package
+        run: pnpm package
+
+      - name: Attach the package to a GitHub release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/*.zip \
+            --title "$GITHUB_REF_NAME" \
+            --generate-notes
+
+      # Skipped entirely until the four secrets are set, so the release half of
+      # this workflow is useful before the store account exists.
+      - name: Upload to the Chrome Web Store as a draft
+        env:
+          CWS_EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
+          CWS_CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
+          CWS_CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
+          CWS_REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
+        if: env.CWS_EXTENSION_ID != ''
+        run: node scripts/publish.mjs
+
+      - name: Say what is left to do
+        env:
+          CWS_EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
+        if: env.CWS_EXTENSION_ID == ''
+        run: |
+          echo "::notice::Store upload skipped — no CWS_* secrets configured. See docs/PUBLISHING.md."

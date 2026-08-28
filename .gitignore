@@ -1,3 +1,10 @@
 node_modules/
 dist/
 .DS_Store
+
+# Chrome Web Store credentials and locally signed builds. Nothing matching
+# these should ever reach a commit — see docs/PUBLISHING.md for where they
+# actually belong (GitHub Actions secrets, or your shell for a manual run).
+.env
+.env.*
+*.pem
