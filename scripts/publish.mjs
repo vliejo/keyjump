@@ -93,14 +93,40 @@ async function status() {
   return body;
 }
 
+/*
+ * uploadState describes the last upload *made through this API*, not the health
+ * of the item. A draft created in the dashboard therefore reports NOT_FOUND
+ * even though the item is fine and has a CRX attached — which reads alarmingly
+ * if you just print the enum. Interpret it against crxVersion instead.
+ */
+function explainState(item) {
+  switch (item.uploadState) {
+    case 'SUCCESS':
+      return 'last API upload succeeded';
+    case 'IN_PROGRESS':
+      return 'an upload is still being processed — re-check in a moment';
+    case 'FAILURE':
+      return 'the last API upload was rejected; see the errors below';
+    case 'NOT_FOUND':
+      return item.crxVersion
+        ? 'no upload has been made through this API — the version below came from the dashboard'
+        : 'no package uploaded yet; run `pnpm store:upload` or upload one in the dashboard';
+    default:
+      return 'unrecognised state';
+  }
+}
+
 if (statusOnly) {
   const item = await status();
   console.log(`item        ${item.id}`);
-  console.log(`state       ${item.uploadState}`);
+  console.log(`state       ${item.uploadState} — ${explainState(item)}`);
   console.log(`crx version ${item.crxVersion ?? '(none uploaded yet)'}`);
   if (item.itemError?.length) {
     for (const e of item.itemError) console.log(`  ! ${e.error_detail || e.error_code}`);
   }
+  // The API exposes no "is it submitted / under review / published" field, so
+  // do not let this read as confirmation of any of those.
+  console.log(`\n  Review and publication status are only visible in the dashboard.`);
   process.exit(0);
 }
 
