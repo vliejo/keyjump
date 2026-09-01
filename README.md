@@ -10,6 +10,9 @@ but scoped to one job: hint, filter, action.
 
 ## Install
 
+The Chrome Web Store listing is not up yet — see [`docs/PUBLISHING.md`](docs/PUBLISHING.md) for
+where that stands. Until then, load it unpacked.
+
 No build step — the extension source is loaded as-is.
 
 ```bash
@@ -123,14 +126,26 @@ page's own DOM is never modified.
 pnpm check     # manifest references resolve, JS parses, hint labels stay unique + prefix-free
 pnpm icons     # regenerate icons/ (hand-rolled PNG encoder, no image dependency)
 pnpm build     # icons + check
-pnpm zip       # dist/keyjump.zip, ready for the Web Store
+pnpm package   # build, then validate against the store's own rules and pack dist/keyjump-<version>.zip
 pnpm demo      # serve the manual test page on :8137
 ```
+
+There are no dependencies — the whole toolchain is Node's standard library.
 
 `test/demo.html` is a manual harness covering the awkward cases: shadow DOM, elements hidden
 three different ways, a scroll container clipping its contents, a modal covering the page, and
 targets below the fold. Activations are logged on the page so you can confirm the right thing
-fired.
+fired. Adding `?standalone` loads the content scripts straight into the page with
+`chrome.storage` stubbed, so you can iterate with a plain reload instead of the
+reload-extension / reload-tab cycle.
+
+### Releasing
+
+`pnpm package` is enough to produce something uploadable by hand. Beyond that, tagging `vX.Y.Z`
+builds the package, attaches it to a GitHub release, and uploads it to the Web Store as a
+**draft** — submitting for review stays a deliberate click. The full path, including the
+one-time Google setup, is in [`docs/PUBLISHING.md`](docs/PUBLISHING.md); the listing copy lives
+in [`store/listing.md`](store/listing.md).
 
 ## Limitations
 
@@ -162,6 +177,40 @@ src/content/
   main.js               state machine and key handling
 src/options/            options page
 src/popup/              toolbar popup (cheat sheet + link to options)
-scripts/                icon generation and pre-load checks
+scripts/
+  check.mjs             pre-load sanity checks
+  make-icons.mjs        icon generation
+  package.mjs           store-rule validation + zip
+  publish.mjs           Chrome Web Store upload / submit
+  cws-token.mjs         one-time OAuth refresh-token helper
+  serve.mjs             demo server
 test/demo.html          manual test page
+docs/PUBLISHING.md      how a release actually reaches the store
+store/listing.md        store listing copy and permission justifications
 ```
+
+## Contributing
+
+Issues and pull requests are welcome at
+[github.com/vliejo/keyjump](https://github.com/vliejo/keyjump/issues).
+
+Before opening a PR, run `pnpm package` — it covers everything CI checks. There are no
+dependencies and no build step, so a change under `src/` is testable by reloading the
+extension, or by opening `test/demo.html?standalone` with `pnpm demo` running.
+
+Two invariants are worth knowing about because the checks enforce them and a change that
+breaks either one is a correctness bug, not a style question:
+
+- **Hint labels stay prefix-free.** Auto-activation is only safe because a fully typed label
+  can never also be the start of a longer one.
+- **The overlay never mutates the page.** Everything renders into a shadow root on a single
+  host element, so page CSS cannot reach in and the page's own DOM is left alone.
+
+## Privacy
+
+KeyJump makes no network requests, has no analytics and no server, and stores nothing but your
+own settings. Full detail in [`PRIVACY.md`](PRIVACY.md).
+
+## License
+
+[MIT](LICENSE) © vliejo

@@ -1,8 +1,10 @@
 {
   "manifest_version": 3,
   "name": "KeyJump",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Press ; to label every link, button and field on the page, then type 1-3 characters to jump straight to it.",
+  "homepage_url": "https://github.com/vliejo/keyjump",
+  "minimum_chrome_version": "105",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",

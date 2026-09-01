@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Regenerates the icons before checking, so a change to make-icons.mjs
+      # that no longer produces valid PNGs fails here rather than at upload.
+      - name: Build and validate the store package
+        run: pnpm package
+
+      # The committed icons should match what the generator produces. This is a
+      # warning rather than a failure on purpose: the PNGs come out of
+      # deflateSync, so a zlib bump inside a Node patch release could change the
+      # bytes without anything actually being wrong. package.mjs already fails
+      # hard on the property that matters — icons that are not the dimensions
+      # the manifest claims.
+      - name: Warn if the committed icons have drifted
+        run: |
+          if ! git diff --quiet -- icons/; then
+            echo "::warning::Regenerating icons produced different bytes than the committed ones. Run 'pnpm icons' and commit if this was intentional."
+            git diff --stat -- icons/
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: keyjump-unpacked-zip
+          path: dist/*.zip
+          if-no-files-found: error

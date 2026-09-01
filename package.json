@@ -1,9 +1,18 @@
 {
   "name": "keyjump",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Chrome extension: press ; to label every link, button and field, then type to jump.",
+  "description": "Press ; to label every link, button and field on the page, then type 1-3 characters to jump straight to it.",
+  "license": "MIT",
+  "homepage": "https://github.com/vliejo/keyjump",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vliejo/keyjump.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vliejo/keyjump/issues"
+  },
   "packageManager": "pnpm@11.21.0",
   "engines": {
     "node": ">=20"
@@ -12,7 +21,11 @@
     "icons": "node scripts/make-icons.mjs",
     "check": "node scripts/check.mjs",
     "build": "pnpm icons && pnpm check",
-    "zip": "pnpm build && mkdir -p dist && rm -f dist/keyjump.zip && zip -qr dist/keyjump.zip manifest.json icons src -x '*.DS_Store' && echo 'packed dist/keyjump.zip'",
+    "package": "pnpm build && node scripts/package.mjs",
+    "store:token": "node scripts/cws-token.mjs",
+    "store:status": "node scripts/publish.mjs --status",
+    "store:upload": "node scripts/publish.mjs",
+    "store:submit": "node scripts/publish.mjs --publish",
     "demo": "node scripts/serve.mjs"
   }
 }
