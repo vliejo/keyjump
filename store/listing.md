@@ -200,10 +200,7 @@ Upload in this order — the first is what shows on the search result card.
 | --- | --- |
 | `screenshots/01-hints-on-wikipedia.png` | Hint mode over a real article: 57 targets labelled, status readout in the corner |
 | `screenshots/02-narrowed-to-14-matches.png` | After one keystroke — 57 down to 14, non-matches gone, the typed `S` dimmed inside its chip, focus ring on the active target |
-
-Worth adding if you want a third: the options page. It needs the extension's own
-`chrome-extension://<id>/src/options/options.html` URL, so it cannot be captured from a
-public page the way these two were.
+| `screenshots/03-options-page.png` | The options page at shipped defaults, dark theme |
 
 **How these were captured**, since getting an exact 1280×800 is fiddlier than it looks:
 
@@ -216,6 +213,19 @@ public page the way these two were.
   capture gets downsampled below 1280 wide, which cannot be recovered by upscaling.
 - DevTools device emulation also works and is immune to the tab bar, but a docked DevTools
   panel blocks programmatic window resizing — close it first if you resize that way.
+- Cropping down to 1280×800 is lossless and fine; upscaling to reach it is not.
+
+The options page cannot be screenshotted at its `chrome-extension://` URL — Chrome blocks
+automation on those, same as `chrome://` pages. Serve it over HTTP instead:
+
+```bash
+pnpm demo    # then http://localhost:8137/src/options/options.html
+```
+
+It renders correctly there because `KJ.loadSettings()` catches a missing `chrome.storage`
+and falls back to defaults — which is also what makes the shot show the shipped defaults
+rather than whatever you have configured locally. Saving does not work over HTTP, but
+nothing about a screenshot needs it to.
 
 ---
 

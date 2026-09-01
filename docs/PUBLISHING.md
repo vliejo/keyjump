@@ -53,11 +53,11 @@ that block submission:
 
 ### 4. Screenshots
 
-**Two are already captured**, both exactly 1280×800, in
-[`store/screenshots/`](../store/screenshots/) — hints over a Wikipedia article, and the same
-page after one keystroke narrows 57 targets to 14. Upload them in numbered order; the first
-is what appears on the search result card. `store/listing.md` records what each one shows
-and the exact recipe for reshooting them.
+**Three are already captured**, all exactly 1280×800, in
+[`store/screenshots/`](../store/screenshots/) — hints over a Wikipedia article, the same page
+after one keystroke narrows 57 targets to 14, and the options page. Upload them in numbered
+order; the first is what appears on the search result card. `store/listing.md` records what
+each one shows and the exact recipe for reshooting them.
 
 Two things worth knowing if you reshoot:
 
@@ -74,8 +74,10 @@ runs the content scripts without installing anything:
 pnpm demo    # then open http://localhost:8137/test/demo.html?standalone
 ```
 
-A third shot of the options page is a nice-to-have; it lives at
-`chrome-extension://<your-item-id>/src/options/options.html`.
+The options page cannot be captured at its `chrome-extension://` URL — Chrome blocks
+automation there. Serve it over HTTP instead; it falls back to default settings when
+`chrome.storage` is absent, which is exactly what you want in a screenshot. See
+`store/listing.md` for the detail.
 
 ### 5. Submit the first version
 
