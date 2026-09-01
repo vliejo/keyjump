@@ -22,10 +22,10 @@
     "check": "node scripts/check.mjs",
     "build": "pnpm icons && pnpm check",
     "package": "pnpm build && node scripts/package.mjs",
-    "store:token": "node scripts/cws-token.mjs",
-    "store:status": "node scripts/publish.mjs --status",
-    "store:upload": "node scripts/publish.mjs",
-    "store:submit": "node scripts/publish.mjs --publish",
+    "store:token": "node --env-file-if-exists=.env scripts/cws-token.mjs",
+    "store:status": "node --env-file-if-exists=.env scripts/publish.mjs --status",
+    "store:upload": "node --env-file-if-exists=.env scripts/publish.mjs",
+    "store:submit": "node --env-file-if-exists=.env scripts/publish.mjs --publish",
     "demo": "node scripts/serve.mjs"
   }
 }
