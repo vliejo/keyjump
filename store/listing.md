@@ -188,9 +188,34 @@ https://github.com/vliejo/keyjump/blob/main/PRIVACY.md
 | Asset | Requirement | Status |
 | --- | --- | --- |
 | Store icon | 128×128 PNG | `icons/icon128.png` — generated, correct size |
-| Screenshots | 1280×800 or 640×400, 1–5 of them | **To capture.** See step 4 of `docs/PUBLISHING.md` |
+| Screenshots | 1280×800 or 640×400, 1–5 of them | Two captured, both exactly 1280×800 — see below |
 | Small promo tile | 440×280 PNG | Optional; only needed to be eligible for featuring |
 | Marquee promo tile | 1400×560 PNG | Optional; editorial placement only |
+
+### Screenshots
+
+Upload in this order — the first is what shows on the search result card.
+
+| File | Shows |
+| --- | --- |
+| `screenshots/01-hints-on-wikipedia.png` | Hint mode over a real article: 57 targets labelled, status readout in the corner |
+| `screenshots/02-narrowed-to-14-matches.png` | After one keystroke — 57 down to 14, non-matches gone, the typed `S` dimmed inside its chip, focus ring on the active target |
+
+Worth adding if you want a third: the options page. It needs the extension's own
+`chrome-extension://<id>/src/options/options.html` URL, so it cannot be captured from a
+public page the way these two were.
+
+**How these were captured**, since getting an exact 1280×800 is fiddlier than it looks:
+
+- The capture is **page-only** — no tab strip, toolbar or window frame appears in it. What
+  matters is the *viewport*, not the window.
+- Browser chrome and a collapsed side tab bar cost 56px of width and 137px of height on this
+  setup, so a **1336×937 window** yields a 1280×800 viewport. Verify with
+  `window.innerWidth/innerHeight` rather than trusting the window size.
+- Keep `devicePixelRatio` at **1**. A retina DPR of 2 quadruples the source pixels and the
+  capture gets downsampled below 1280 wide, which cannot be recovered by upscaling.
+- DevTools device emulation also works and is immune to the tab bar, but a docked DevTools
+  panel blocks programmatic window resizing — close it first if you resize that way.
 
 ---
 

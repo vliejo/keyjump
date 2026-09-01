@@ -53,19 +53,29 @@ that block submission:
 
 ### 4. Screenshots
 
-The one part that cannot be scripted, because it has to show real hints on a real page.
-The demo page can stand in for a real site and runs the content scripts without the
-extension installed:
+**Two are already captured**, both exactly 1280×800, in
+[`store/screenshots/`](../store/screenshots/) — hints over a Wikipedia article, and the same
+page after one keystroke narrows 57 targets to 14. Upload them in numbered order; the first
+is what appears on the search result card. `store/listing.md` records what each one shows
+and the exact recipe for reshooting them.
+
+Two things worth knowing if you reshoot:
+
+- What matters is the **viewport**, not the window — captures are page-only, with no browser
+  chrome in frame. Check `window.innerWidth/innerHeight`, not the window size.
+- Keep `devicePixelRatio` at 1. At DPR 2 the capture is downsampled below 1280 wide and
+  upscaling will not bring the detail back.
+
+Note that the Chrome Web Store's own pages block content scripts, so the extension cannot be
+demonstrated on them — pick an ordinary public page. The bundled demo page also works and
+runs the content scripts without installing anything:
 
 ```bash
 pnpm demo    # then open http://localhost:8137/test/demo.html?standalone
 ```
 
-Size the window to **1280×800**, press <kbd>;</kbd>, and capture. Worth having:
-
-1. Hints over the demo page — the core idea in one image.
-2. A partially typed query, so the dimmed prefix and the highlighted ring are both visible.
-3. The options page.
+A third shot of the options page is a nice-to-have; it lives at
+`chrome-extension://<your-item-id>/src/options/options.html`.
 
 ### 5. Submit the first version
 
