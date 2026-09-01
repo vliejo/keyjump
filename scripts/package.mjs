@@ -55,6 +55,31 @@ check(
   `description is ${manifest.description?.length ?? 0} characters; the store allows 132`
 );
 
+/*
+ * The manifest's description is the store's summary line, and the same sentence
+ * is also the package description, the repo description on GitHub, and the
+ * Summary field in store/listing.md. The manifest is the source of truth for
+ * all of them; drift here means shipping two different pitches for one
+ * extension, which is the kind of thing nobody notices for a year.
+ */
+const pkg = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8'));
+check(
+  pkg.description === manifest.description,
+  `package.json description does not match manifest.json:\n` +
+    `      manifest: ${manifest.description}\n` +
+    `      package:  ${pkg.description}`
+);
+check(
+  pkg.version === manifest.version,
+  `package.json version (${pkg.version}) does not match manifest.json (${manifest.version})`
+);
+
+const listingDoc = readFileSync(join(ROOT, 'store', 'listing.md'), 'utf8');
+check(
+  listingDoc.includes(manifest.description),
+  'store/listing.md no longer quotes the manifest description as the store Summary'
+);
+
 /* ------------------------------------------------------------- icon dimensions */
 
 /** Width and height straight out of a PNG's IHDR chunk, which is always first. */
